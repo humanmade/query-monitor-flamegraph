@@ -1,0 +1,46 @@
+.timestack-flamegraph {
+	min-height: 400px;
+	position: relative;
+}
+
+.timestack-flamegraph > ul.timestack-split-timeline {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+}
+
+ul.timestack-split-timeline {
+	list-style: none;
+	margin: 0;
+	padding: 0 !important;
+	position: relative;
+	height: 20px;
+	margin-top: -20px !important;
+}
+
+ul.timestack-split-timeline > li {
+	float: left;
+	display: block;
+	height: 20px;
+	box-sizing: border-box;
+	position: relative;
+	/*border-right: 1px solid rgba(0,0,0,.3);*/
+	border-radius: 2px;
+	position: relative;
+}
+
+ul.timestack-split-timeline > li:after {
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	content: attr(data-name);
+	overflow: hidden;
+	padding: 1px 4px;
+	opacity: .3;
+	font-weight: bold;
+	font-size: 10px;
+}
