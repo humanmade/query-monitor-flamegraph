@@ -2,7 +2,7 @@
 	<tr>
 		<td align="left" width="70">
 			<strong>Query Monitor Flamegraph</strong><br />
-			This Query Monitor extension will add profiling framegraphs to Query Monitor via the [forp](http://anthonyterrien.com/forp/) PHP extension.
+			This Query Monitor extension will add profiling framegraphs to Query Monitor via the <a href="http://anthonyterrien.com/forp/">forp</a> PHP extension.
 		</td>
 		<td align="right" width="20%">
 				</td>
