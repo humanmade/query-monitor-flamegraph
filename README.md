@@ -21,7 +21,7 @@
 
 ## Install Instructions
 
-1. Have the [Query](https://github.com/johnbillion/query-monitor) Monitor plugin installed and activated.
+1. Have the [Query Monitor](https://github.com/johnbillion/query-monitor) plugin installed and activated.
 1. Have the [forp](http://anthonyterrien.com/forp/) PHP extension installed.
 1. Install this plugin :)
 1. Add a call to `forp_start( FORP_FLAG_TIME );` to your `wp-config.php`
