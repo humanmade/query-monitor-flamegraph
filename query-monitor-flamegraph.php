@@ -16,7 +16,6 @@ function register_qm_collector( array $collectors, \QueryMonitor $qm ) {
 
 add_filter( 'qm/collectors', 'QM_Flamegraph\register_qm_collector', 20, 2 );
 
-
 function register_qm_output( array $output, \QM_Collectors $collectors ) {
 	if ( $collector = \QM_Collectors::get( 'flamegraph' ) ) {
 		include_once dirname( __FILE__ ) . '/inc/class-qm-output-html.php';
