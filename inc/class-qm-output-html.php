@@ -12,7 +12,7 @@ the Free Software Foundation; either version 2 of the License, or
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	See the
 GNU General Public License for more details.
 
 */
@@ -25,144 +25,44 @@ class QM_Output_Html extends \QM_Output_Html {
 	}
 
 	public function output() {
+		$time = (int) ini_get( 'xhprof.sampling_interval' );
 
-		if ( ! $dump = $this->get_dump() ) {
-			return "To forp() dump found, did you all forp_init()?";
+		if ( ! $time ) {
+			$time = 100000;
 		}
-
-		$stack = $this->make_stack_hierachical( $dump['stack'] );
 		?>
 
 		<div class="qm" id="qm-flamegraph">
-			<h1><?php echo $stack['usec'] / 1000 ?> Milliseconds</h1>
 			<div class="timestack-flamegraph">
-				<?php $this->render_split_timeline( $stack ) ?>
+
 			</div>
+			<div id="qm-flamegraph-data" style="display: none"><?php echo json_encode( $this->collector->get_data()[0] ); ?></div>
+			<script type="text/javascript">
+				var flameGraph = d3.flameGraph()
+					.height(540)
+					//.width(960)
+					.cellHeight(18)
+					.transitionDuration(350)
+					.transitionEase('cubic-in-out')
+					//.sort(true)
+					.title("Flamegraph (<?php echo sprintf( '%dms intervals', $time / 1000 ) ?>)")
+
+				// Example on how to use custom tooltips using d3-tip.
+				var tip = d3.tip()
+					.direction("s")
+					.offset([8, 0])
+					.attr('class', 'd3-flame-graph-tip')
+					.html(function(d) { return "name: " + d.name + ", time: " + d.value + 'ms'; });
+
+				flameGraph.tooltip(tip);
+				data = JSON.parse( document.getElementById( 'qm-flamegraph-data').innerHTML )
+					d3.select(".timestack-flamegraph")
+					.datum(data)
+					.call(flameGraph);
+			</script>
 		</div>
 		<?php
 
 	}
 
-	protected function get_dump() {
-		if ( empty( $this->dump ) ) {
-
-			// forp uses a lot of memory!
-			ini_set( 'memory_limit', WP_MAX_MEMORY_LIMIT );
-			forp_end();
-			$this->dump = forp_dump();
-
-			if ( empty( $this->dump['stack'] ) ) {
-				$this->dump = null;
-			}
-		}
-
-		return $this->dump;
-	}
-
-	protected function make_stack_hierachical( $stack ) {
-
-		foreach ( $stack as $key => $item ) {
-			if ( $item['usec'] < 1000 ) {
-				unset( $stack[$key] );
-			}
-		}
-
-		$parent = $stack[0];
-
-		$parent['children'] = $this->get_children( 0, $stack );
-		return $parent;
-	}
-
-	protected function get_children( $id, $stack ) {
-
-		$children = wp_list_filter( $stack, array( 'parent' => $id ) );
-
-		foreach ( $children as $id => &$child ) {
-			$child['children'] = $this->get_children( $id, $stack );
-		}
-
-		return $children;
-	}
-
-	private function render_split_timeline( $stack ) {
-		?>
-		<ul class="timestack-split-timeline">
-			<?php foreach ( $stack['children'] as $child ) :
-				$percent = $child['usec'] / $stack['usec'] * 100;
-				$this->render_timeline_block( $percent, $child );
-			endforeach; ?>
-		</ul>
-		<?php
-	}
-
-	private function render_timeline_block( $percent, $stack ) {
-
-		?>
-
-			<li class="type-operation"
-				title="<?php echo esc_attr( $this->get_name( $stack ) ) ?>&#013;Time: <?php echo $stack['usec'] / 1000; ?> ms"
-				data-name="<?php echo esc_attr( $this->get_name( $stack ) ) ?>"
-				data-time="<?php echo esc_attr( $stack['usec'] / 1000 ) ?>"
-				style="width: <?php echo floatval( $percent ); ?>%; background-color: <?php echo esc_attr( $this->string_to_color( $stack['function'] ) ) ?>;">
-				<?php
-				if ( $stack['children'] ) {
-					$this->render_split_timeline( $stack );
-				}
-				?>
-			</li>
-		<?php
-	}
-
-	public function string_to_color( $str ) {
-
-		if ( isset( $this->colors[$str] ) ) {
-			return $this->colors[$str];
-		}
-
-		$colors = array(
-			'rgb(201, 90, 41)',
-			'rgb(208, 207, 56)',
-			'rgb(212, 164, 51)',
-			'rgb(229, 103, 47)',
-			'rgb(200, 120, 44)',
-			'rgb(205, 123, 45)',
-			'rgb(194, 34, 36)',
-			'rgb(225, 60, 43)',
-			'rgb(202, 42, 38)',
-			'rgb(235, 136, 51)',
-			'rgb(197, 35, 41)',
-			'rgb(223, 116, 51)',
-			'rgb(229, 91, 46)',
-			'rgb(203, 130, 59)',
-			'rgb(214, 100, 45)',
-			'rgb(231, 163, 53)',
-			'rgb(196, 34, 37)',
-			'rgb(232, 148, 56)'
-		);
-
-		return $this->colors[$str] = $colors[array_rand( $colors )];
-	}
-
-	public function get_name( $item ) {
-		$name = '';
-		if ( ! empty( $item['class'] ) ) {
-			$name = $item['class'] . ':';
-		}
-
-		if ( $item['function'] == '{closure}' ) {
-			$name .= $this->make_file_relative( $item['file'] ) . ':' . ( ! empty( $item['lineno'] ) ? $item['lineno'] : '' );
-		} else if ( in_array( $item['function'], array( 'require_once', 'include_once', 'require', 'include' ) ) ) {
-			$name .= $this->make_file_relative( $item['file'] );
-		} else if ( $item['function'] === 'do_action' ) {
-			$name .= 'action: ' . $this->make_file_relative( $item['file'] ) . ( ! empty( $item['lineno'] ) ? $item['lineno'] : '' );
-		} else {
-			$name .= $item['function'];
-		}
-
-		return $name;
-	}
-
-	protected function make_file_relative( $file ) {
-		return str_replace( array( ABSPATH, WP_CONTENT_DIR ), '', $file );
-	}
 }
