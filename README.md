@@ -17,7 +17,7 @@
 	</tr>
 </table>
 
-![](http://joehoyle-captured.s3.amazonaws.com/dH6vR5pg.png)
+![](https://cloud.githubusercontent.com/assets/161683/18526915/87445e9c-7a90-11e6-8d87-3624c3268a1f.gif)
 
 ## Install Instructions
 
