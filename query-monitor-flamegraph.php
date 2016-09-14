@@ -28,7 +28,7 @@ function register_qm_output( array $output, \QM_Collectors $collectors ) {
 add_filter( 'qm/outputter/html', 'QM_Flamegraph\register_qm_output', 120, 2 );
 
 add_action( 'wp_enqueue_scripts', 'QM_Flamegraph\enqueue_scripts', 999 );
-add_action( 'admin_head', 'QM_Flamegraph\enqueue_styles', 999 );
+add_action( 'admin_enqueue_scripts', 'QM_Flamegraph\enqueue_scripts', 999 );
 
 function enqueue_scripts() {
 	wp_register_script( 'qm-flamegraph-d3', plugins_url( 'js/d3-flame-graph/bower_components/d3/d3.js', __FILE__ ) );
