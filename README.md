@@ -33,7 +33,7 @@ Unfortunately XHProf is not actively maintained and has some shortcomings. Flame
 |Project|Compatible|Notes|
 |---|---|---|
 |[XHProf Official](https://pecl.php.net/package/xhprof)|yes|Note: Doesn't support PHP 7. Is restricted to 100ms interval sampling, making it useless for the most part.|
-|[XHProf with configurable sampling](https://github.com/phacility/xhprof/pull/80)|yes|Best solution! However, you'll need to build from source.|
+|[XHProf with configurable sampling](https://github.com/phacility/xhprof/pull/80)|yes|Note: Doesn't support PHP 7. Best solution! However, you'll need to build from source.|
 |[Tideways](https://tideways.io/profiler/xhprof-for-php7-php5.6)|no|Tideways is an XHProf fork, however doesn't support `*_sample_enabled`. See https://github.com/tideways/php-profiler-extension/issues/26.|
 |[XHProf PHP7 fork](https://github.com/RustJason/xhprof/tree/php7)|no|Doesn't support `xhprof_sample_enabled`|
 
