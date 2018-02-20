@@ -29,9 +29,6 @@ class QM_Collector extends \QM_Collector {
 		if ( ! function_exists( 'xhprof_sample_enable' ) ) {
 			return;
 		}
-
-		ini_set( 'xhprof.sampling_interval', 1000 );
-		xhprof_sample_enable();
 	}
 
 	public function process() {
@@ -41,6 +38,7 @@ class QM_Collector extends \QM_Collector {
 		}
 
 		$stack = xhprof_sample_disable();
+
 		$this->data = $this->folded_to_hierarchical( $stack );
 	}
 
@@ -49,26 +47,33 @@ class QM_Collector extends \QM_Collector {
 		$nodes = array( (object) array(
 			'name' => 'main()',
 			'value' => 1,
+			'children' => [],
 		) );
 
 		foreach ( $stack as $time => $call_stack ) {
 			$call_stack = explode( '==>', $call_stack );
+
+
 			$nodes = $this->add_children_to_nodes( $nodes, $call_stack );
 		}
 
 		return $nodes;
 	}
 
+	/**
+	 * Accepts [ Node, Node ], [ main, wp-settings, sleep ]
+	 */
 	protected function add_children_to_nodes( $nodes, $children ) {
-		$last_node = $nodes[ count( $nodes ) - 1 ];
+		$last_node = $nodes ? $nodes[ count( $nodes ) - 1 ] : null;
 		$this_child = $children[0];
 		$time = (int) ini_get( 'xhprof.sampling_interval' );
 
 		if ( ! $time ) {
 			$time = 100000;
 		}
-		if ( $last_node->name === $this_child ) {
+		if ( $last_node && $last_node->name === $this_child ) {
 			$node = $last_node;
+			$node->value += ( $time / 1000 );
 		} else {
 			$nodes[] = $node = (object) array(
 				'name'	=> $this_child,
@@ -76,7 +81,6 @@ class QM_Collector extends \QM_Collector {
 				'children' => array(),
 			);
 		}
-
 		if ( count( $children ) > 1 ) {
 			$node->children = $this->add_children_to_nodes( $node->children, array_slice( $children, 1 ) );
 		}

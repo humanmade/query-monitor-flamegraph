@@ -37,6 +37,11 @@ class QM_Output_Html extends \QM_Output_Html {
 
 			</div>
 			<div id="qm-flamegraph-data" style="display: none"><?php echo json_encode( $this->collector->get_data()[0] ); ?></div>
+			<style>
+				.d3-flame-graph-tip {
+					z-index: 99999;
+				}
+			</style>
 			<script type="text/javascript">
 				var flameGraph = d3.flameGraph()
 					.height(540)
