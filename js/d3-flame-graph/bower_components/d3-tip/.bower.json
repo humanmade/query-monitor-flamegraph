@@ -1,0 +1,27 @@
+{
+  "name": "d3-tip",
+  "version": "0.6.8",
+  "main": "index.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components",
+    "bower_components",
+    "examples",
+    "Makefile",
+    "docs"
+  ],
+  "dependencies": {
+    "d3": "^3.5.5"
+  },
+  "homepage": "https://github.com/Caged/d3-tip",
+  "_release": "0.6.8",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.6.8",
+    "commit": "92bd167db0c3c24e895e7405376630be79b53a0b"
+  },
+  "_source": "https://github.com/Caged/d3-tip.git",
+  "_target": "~0.6.7",
+  "_originalSource": "d3-tip"
+}
