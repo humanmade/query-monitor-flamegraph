@@ -109,7 +109,11 @@ class QM_Collector extends \QM_Collector {
 				$this->max_depth = count( $named_stack );
 			}
 
-			$nodes = $this->add_children_to_nodes($nodes, $named_stack);
+			$event_count = $log_entry->getEventCount();
+			// If a log occurs multiple times, it means we spent more time in that function.
+			for ( $i = 0; $i < $event_count; $i++ ) {
+				$nodes = $this->add_children_to_nodes($nodes, $named_stack);
+			}
 		};
 
 		$nodes = array( (object) array(
