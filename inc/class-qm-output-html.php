@@ -25,11 +25,9 @@ class QM_Output_Html extends \QM_Output_Html {
 	}
 
 	public function output() {
-		$time = (int) ini_get( 'xhprof.sampling_interval' );
-
-		if ( ! $time ) {
-			$time = 100000;
-		}
+		$time = ( new QM_Collector() )->get_sampling_interval();
+		$cell_height = 18;
+		$height = isset( $this->collector->max_depth ) ? $cell_height * $this->collector->max_depth : 540
 		?>
 
 		<div class="qm" id="qm-flamegraph">
@@ -44,9 +42,9 @@ class QM_Output_Html extends \QM_Output_Html {
 			</style>
 			<script type="text/javascript">
 				var flameGraph = d3.flameGraph()
-					.height(540)
-					//.width(960)
-					.cellHeight(18)
+					.height(<?php echo esc_js( $height ); ?>)
+					// .width(960)
+					.cellHeight(<?php echo esc_js( $cell_height ); ?>)
 					.transitionDuration(350)
 					.transitionEase('cubic-in-out')
 					//.sort(true)
